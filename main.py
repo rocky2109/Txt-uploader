@@ -542,7 +542,7 @@ async def upload(bot: Client, m: Message):
                             if os.path.exists(f'{name}.jpg'):
                                 os.remove(f'{name}.jpg')         
 
-                 """       
+                      
                 elif "youtu" in url: 
                     try:
                         await bot.send_photo(chat_id=m.chat.id, photo=photo, caption=cyt)
@@ -551,7 +551,7 @@ async def upload(bot: Client, m: Message):
                         await m.reply_text(str(e))
                         await asyncio.sleep(1)
                         continue
-                    """
+                    
                 elif ".ws" in url and  url.endswith(".ws"):
                         try : 
                             await helper.pdf_download(f"{api_url}utkash-ws?url={url}&authorization={api_token}",f"{name}.html")
