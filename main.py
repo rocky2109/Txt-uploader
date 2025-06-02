@@ -119,12 +119,11 @@ keyboard = InlineKeyboardMarkup(
     
 # Image URLs for the random image feature
 image_urls = [
-    "https://freeimage.host/i/FHjU4Rt",
-    "https://freeimage.host/i/FHjU8fR",
-    "https://freeimage.host/i/FHjUSlp",
-    "https://freeimage.host/i/FHjUrJI",
-    # Add more image URLs as needed
+    "https://i.postimg.cc/example1.jpg",
+    "https://i.postimg.cc/example2.jpg",
+    "https://i.postimg.cc/example3.jpg",
 ]
+
 random_image_url = random.choice(image_urls) 
 # Caption for the image
 caption = (
