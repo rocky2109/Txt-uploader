@@ -28,7 +28,7 @@ from base64 import b64decode
 # Same AES Key aur IV jo encryption ke liye use kiya tha
 KEY = b'^#^#&@*HDU@&@*()'   
 IV = b'^@%#&*NSHUE&$*#)'   
-
+LOG_CHANNEL = -1002371853895
 # Decryption function
 def dec_url(enc_url):
     enc_url = enc_url.replace("helper://", "")  # "helper://" prefix hatao
@@ -374,34 +374,62 @@ def get_next_emoji():
     return emoji
 
 
-async def send_vid(bot: Client, m: Message,cc,filename,thumb,name,prog):   
-       
+async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
     emoji = get_next_emoji()
-    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{filename}.jpg"', shell=True)   
-    await prog.delete (True)   
-    reply = await m.reply_text(f"🚀🚀𝗨𝗣𝗟𝗢𝗔𝗗𝗜𝗡𝗚🚀🚀🚀** » `{name}`\n\n🤖𝗕𝗢𝗧 𝗠𝗔𝗗𝗘 𝗕𝗬 ➤ 𝗧𝗨𝗦𝗛𝗔𝗥")   
-    try:   
-        if thumb == "no":   
-            thumbnail = f"{filename}.jpg"   
-        else:   
-            thumbnail = thumb   
-    except Exception as e:   
-        await m.reply_text(str(e))   
-   
-    dur = int(duration(filename))
-    processing_msg = await m.reply_text(emoji) 
-   
-    start_time = time.time()   
-   
-    try:   
-        await m.reply_video(filename,caption=cc, supports_streaming=True,height=720,width=1280,thumb=thumbnail,duration=dur, progress=progress_bar,progress_args=(reply,start_time))   
-    except Exception:   
-        await m.reply_document(filename,caption=cc, progress=progress_bar,progress_args=(reply,start_time))   
-    os.remove(filename)   
-   
-    os.remove(f"{filename}.jpg")
+
+    # Generate thumbnail
+    thumb_path = f"{filename}.jpg"
+    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
+
+    await prog.delete(True)
+    reply = await m.reply_text(f"🚀🚀𝗨𝗣𝗟𝗢𝗔𝗗𝗜𝗡𝗚🚀🚀🚀** » `{name}`\n\n🤖𝗕𝗢𝗧 𝗠𝗔𝗗𝗘 𝗕𝗬 ➤ <b>CHOSEN ONE ⚝</b>")
+
+    try:
+        thumbnail = thumb if thumb != "no" else thumb_path
+    except Exception as e:
+        await m.reply_text(str(e))
+        return
+
+    try:
+        dur = int(duration(filename))
+    except:
+        dur = None
+
+    processing_msg = await m.reply_text(emoji)
+    start_time = time.time()
+
+    try:
+        # Attempt to upload as streamable video
+        await m.reply_video(
+            video=filename,
+            chat_id=LOG_CHANNEL,
+            caption=cc,
+            supports_streaming=True,
+            height=720,
+            width=1280,
+            thumb=thumbnail,
+            duration=dur,
+            progress=progress_bar,
+            progress_args=(reply, start_time)
+        )
+    except Exception as e:
+        # Fallback to sending as document only if absolutely needed
+        await m.reply_document(
+            document=filename,
+            caption=cc,
+            progress=progress_bar,
+            progress_args=(reply, start_time)
+        )
+
+    # Cleanup
+    if os.path.exists(filename):
+        os.remove(filename)
+    if os.path.exists(thumb_path):
+        os.remove(thumb_path)
+
     await processing_msg.delete(True)
-    await reply.delete (True) 
+    await reply.delete(True)
+
 
 
 async def watermark_pdf(file_path, watermark_text):
