@@ -36,7 +36,7 @@ import zipfile
 import shutil
 import ffmpeg
 from pyrogram import Client, filters
-from helper import handle_m3u8_download_and_upload
+from helper_full_upgraded import handle_m3u8_download_and_upload
 
 app = Client("TusharBot", api_id=12345, api_hash="abc", bot_token="your_bot_token")
 
