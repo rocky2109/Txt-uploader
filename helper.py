@@ -398,28 +398,40 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
     processing_msg = await m.reply_text(emoji)
     start_time = time.time()
 
+    # Upload to user's chat
     try:
-        # Attempt to upload as streamable video
         await m.reply_video(
             video=filename,
-            chat_id=LOG_CHANNEL,
             caption=cc,
+            thumb=thumbnail,
+            duration=dur,
             supports_streaming=True,
             height=720,
             width=1280,
-            thumb=thumbnail,
-            duration=dur,
             progress=progress_bar,
             progress_args=(reply, start_time)
         )
     except Exception as e:
-        # Fallback to sending as document only if absolutely needed
         await m.reply_document(
             document=filename,
             caption=cc,
             progress=progress_bar,
             progress_args=(reply, start_time)
         )
+
+# Upload to log channel too
+    try:
+        await bot.send_video(
+            chat_id=LOG_CHANNEL,
+            video=filename,
+            caption=f"🧾 Uploaded by [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n{cc}",
+            thumb=thumbnail,
+            duration=dur,
+            supports_streaming=True
+        )
+    except Exception as e:
+        print(f"Failed to upload to log channel: {e}")
+
 
     # Cleanup
     if os.path.exists(filename):
