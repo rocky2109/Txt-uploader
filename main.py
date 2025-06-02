@@ -38,7 +38,6 @@ import ffmpeg
 from pyrogram import Client, filters
 from helper_full_upgraded import handle_m3u8_download_and_upload
 
-app = Client("TusharBot", api_id=12345, api_hash="abc", bot_token="your_bot_token")
 
 @app.on_message(filters.command("grab"))
 async def grab_video(client, message):
@@ -50,7 +49,7 @@ async def grab_video(client, message):
     key = args[2] if len(args) > 2 else None
     await handle_m3u8_download_and_upload(client, message, url, key)
 
-app.run()
+
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
