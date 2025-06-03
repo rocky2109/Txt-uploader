@@ -393,9 +393,6 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
     thumb_path = f"{filename}.jpg"
     subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
 
-    await prog.delete(True)
-    reply = await m.reply_text(f"🚀 Uploading `{name}` as video...")
-
     thumbnail = thumb if thumb != "no" else thumb_path
 
     try:
@@ -419,7 +416,6 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
             progress_args=(reply, start_time)
         )
     except Exception as e:
-        await m.reply_text(f"❌ Upload failed as video:\n`{str(e)}`\nSending as document.")
         await m.reply_document(
             document=filename,
             caption=cc,
