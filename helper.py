@@ -408,7 +408,7 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
         await m.reply_video(
             video=filename,
             caption=cc,
-            thumb=thumbnail,
+            thumbnail=thumb_path,
             duration=dur,
             supports_streaming=True,
             height=720,
@@ -431,7 +431,7 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
             chat_id=LOG_CHANNEL,
             video=filename,
             caption=f"🧾 Uploaded by [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n{cc}",
-            thumb=thumbnail,
+            thumbnail=thumb_path,
             duration=dur,
             supports_streaming=True
         )
