@@ -46,7 +46,7 @@ token_cp ='eyJjb3Vyc2VJZCI6IjQ1NjY4NyIsInR1dG9ySWQiOm51bGwsIm9yZ0lkIjo0ODA2MTksI
 cookies_file_path = os.getenv("cookies_file_path", "youtube_cookies.txt")
 
 async def show_random_emojis(message):
-    emojis = ['🎊', '🔮', '😎', '⚡️', '🚀', '✨', '💥', '🎉', '🥂', '🍾', '🦠', '🤖', '❤️‍🔥', '🕊️', '💃', '🥳','🐅','🦁']
+    emojis = ['🎊', '🔮', '😎', '⚡️', '🚀', '✨', '💥', '🎉', '🥂', '🍾', '😉', '😘', '❤️‍🔥', '🕊️', '💃', '🥳','🐅','🦁']
     emoji_message = await message.reply_text(' '.join(random.choices(emojis, k=1)))
     return emoji_message
     
@@ -67,6 +67,14 @@ bot = Client(
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN)
+
+def ensure_streamable(filename):
+    if not filename.endswith(".mp4"):
+        return filename  # Only fix .mp4
+    fixed = f"fixed_{filename}"
+    os.system(f'ffmpeg -i "{filename}" -c copy -movflags +faststart "{fixed}"')
+    return fixed
+
 
 # Sudo command to add/remove sudo users
 @bot.on_message(filters.command("sudo"))
