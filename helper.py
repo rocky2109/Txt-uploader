@@ -375,36 +375,31 @@ def get_next_emoji():
 
 
 async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
+    import subprocess, os, time
     emoji = get_next_emoji()
-    # Ensure streamable mp4 with faststart
-if filename.endswith(".mp4"):
-    fixed_name = f"fixed_{filename}"
-    os.system(f'ffmpeg -i "{filename}" -c copy -movflags +faststart "{fixed_name}"')
-    filename = fixed_name
 
+    # Fix file for Telegram streaming
+    if filename.endswith(".mp4"):
+        fixed = f"fixed_{filename}"
+        os.system(f'ffmpeg -i "{filename}" -c copy -movflags +faststart "{fixed}"')
+        filename = fixed
 
     # Generate thumbnail
     thumb_path = f"{filename}.jpg"
     subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
 
     await prog.delete(True)
-    reply = await m.reply_text(f"🚀🚀𝗨𝗣𝗟𝗢𝗔𝗗𝗜𝗡𝗚🚀🚀🚀** » `{name}`\n\n🤖𝗕𝗢𝗧 𝗠𝗔𝗗𝗘 𝗕𝗬 ➤ <b>CHOSEN ONE ⚝</b>")
+    reply = await m.reply_text(f"🚀 Uploading `{name}` as video...")
 
-    try:
-        thumbnail = thumb if thumb != "no" else thumb_path
-    except Exception as e:
-        await m.reply_text(str(e))
-        return
-
+    thumbnail = thumb if thumb != "no" else thumb_path
     try:
         dur = int(duration(filename))
     except:
         dur = None
 
-    processing_msg = await m.reply_text(emoji)
     start_time = time.time()
+    processing_msg = await m.reply_text(emoji)
 
-    # Upload to user's chat
     try:
         await m.reply_video(
             video=filename,
@@ -424,6 +419,27 @@ if filename.endswith(".mp4"):
             progress=progress_bar,
             progress_args=(reply, start_time)
         )
+
+    # Log channel upload
+    try:
+        await bot.send_video(
+            chat_id=LOG_CHANNEL,
+            video=filename,
+            caption=f"🧾 Uploaded by [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n{cc}",
+            thumb=thumbnail,
+            duration=dur,
+            supports_streaming=True
+        )
+    except Exception as e:
+        print(f"Failed to upload to log channel: {e}")
+
+    # Cleanup
+    for f in [filename, thumb_path]:
+        if os.path.exists(f):
+            os.remove(f)
+    await processing_msg.delete(True)
+    await reply.delete(True)
+
 
 # Upload to log channel too
     try:
