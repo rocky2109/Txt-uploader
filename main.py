@@ -432,7 +432,7 @@ async def upload(bot: Client, m: Message):
                 cyt = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝.mp4\n\n🔗𝗩𝗶𝗱𝗲𝗼 𝗨𝗿𝗹 ➤ <a href="{url}">__Click Here to Watch Video__</a>\n\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵: {b_name}</code></pre>\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆 ➤  {CR}**'
                 cpvod = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝.mkv\n\n🔗𝗩𝗶𝗱𝗲𝗼 𝗨𝗿𝗹 ➤ <a href="{url}">__Click Here to Watch Video__</a>\n\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵: {b_name}</code></pre>\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆 ➤  {CR}**'
                 cimg = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝.jpg\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵 ➤ {b_name}</code></pre>\n\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆: {CR}**'
-                cczip = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝.zip\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵 ➤ {b_name}</code></pre>\n\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆: {CR}**'
+                cczip = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝..zip\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵 ➤ {b_name}</code></pre>\n\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆: {CR}**'
                 cc1 = f'🌟────•~❉{str(count).zfill(3)}❉~•────🌟\n\n☘️𝗧𝗶𝘁𝗹𝗲 ➤ {name1}.CHOSEN ONE ⚝.pdf\n\n<pre><code>📚𝗕𝗮𝘁𝗰𝗵 ➤ {b_name}</code></pre>\n\n𖣐 𝗫𝗧𝗿𝗮𝗰𝘁𝗲𝗱 𝗕𝘆: {CR}**'
           
           
