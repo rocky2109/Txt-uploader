@@ -381,23 +381,24 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
 
     emoji = get_next_emoji()
 
-    # ✅ Ensure Telegram streamable .mp4 with faststart
+    # Ensure Telegram streamable .mp4 with faststart
     if filename.endswith(".mp4"):
         fixed = f"fixed_{os.path.basename(filename)}"
         subprocess.run(f'ffmpeg -y -i "{filename}" -c copy -movflags +faststart "{fixed}"', shell=True)
         if os.path.exists(fixed):
-            os.remove(filename)  # Remove old unoptimized file
+            os.remove(filename)
             filename = fixed
 
-    # ✅ Generate thumbnail
+    # Generate thumbnail if needed
     thumb_path = f"{filename}.jpg"
-    subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
+    if not os.path.exists(thumb_path):
+        subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
 
     thumbnail = thumb if thumb != "no" else thumb_path
 
     try:
         dur = int(duration(filename))
-    except:
+    except Exception:
         dur = None
 
     start_time = time.time()
@@ -413,17 +414,18 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
             height=720,
             width=1280,
             progress=progress_bar,
-            progress_args=(reply, start_time)
+            progress_args=(processing_msg, start_time)
         )
-    except Exception as e:
+    except Exception:
+        # If video fails, fallback to document upload
         await m.reply_document(
             document=filename,
             caption=cc,
             progress=progress_bar,
-            progress_args=(reply, start_time)
+            progress_args=(processing_msg, start_time)
         )
 
-    # ✅ Upload to log channel too
+    # Optionally upload to log channel as streamable video
     try:
         await bot.send_video(
             chat_id=LOG_CHANNEL,
@@ -435,6 +437,13 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
         )
     except Exception as e:
         print(f"❌ Log upload failed: {e}")
+
+    # Cleanup
+    for f in [filename, thumb_path]:
+        if os.path.exists(f):
+            os.remove(f)
+
+    await processing_msg.delete(True)
 
     # ✅ Cleanup
     for f in [filename, thumb_path]:
