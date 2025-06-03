@@ -375,10 +375,7 @@ def get_next_emoji():
 
 
 async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
-    import subprocess, os, time
-    from helper import duration, get_next_emoji
-    from p_bar import progress_bar
-
+    
     emoji = get_next_emoji()
 
     # Ensure Telegram streamable .mp4 with faststart
