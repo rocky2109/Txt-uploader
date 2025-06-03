@@ -376,6 +376,12 @@ def get_next_emoji():
 
 async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
     emoji = get_next_emoji()
+    # Ensure streamable mp4 with faststart
+if filename.endswith(".mp4"):
+    fixed_name = f"fixed_{filename}"
+    os.system(f'ffmpeg -i "{filename}" -c copy -movflags +faststart "{fixed_name}"')
+    filename = fixed_name
+
 
     # Generate thumbnail
     thumb_path = f"{filename}.jpg"
