@@ -202,7 +202,7 @@ async def help_command(client: Client, msg: Message):
     await msg.reply_text(help_text)
 
 # Upload command handler
-@bot.on_message(filters.command(["xtract"]))
+@bot.on_message(filters.command(["xtract"]) & (filters.private | filters.channel | filters.group))
 async def upload(bot: Client, m: Message):
     if not is_authorized(m.chat.id):
         await m.reply_text("**🚫You are not authorized to use this bot.**")
