@@ -204,7 +204,7 @@ async def decrypt_and_merge_video(mpd_url, keys_string, output_path, output_name
         if not video_decrypted or not audio_decrypted:
             raise FileNotFoundError("Decryption failed: video or audio file not found.")
 
-        cmd4 = f'ffmpeg -i "{output_path}/video.mp4" -i "{output_path}/audio.m4a" -c copy "{output_path}/{output_name}.mp4"'
+        cmd4 = f'ffmpeg -i "{output_path}/video.mp4" -i "{output_path}/audio.m4a" -c copy -movflags +faststart "{output_path}/{output_name}.mp4"'
         print(f"Running command: {cmd4}")
         os.system(cmd4)
         if (output_path / "video.mp4").exists():
