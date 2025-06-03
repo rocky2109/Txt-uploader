@@ -125,26 +125,44 @@ keyboard = InlineKeyboardMarkup(
             ]
       )
     
-# Image URLs for the random image feature
+# Clean and direct image links (no spaces)
 image_urls = [
-    " https://postimg.cc/94cGNLYb ",
-    " https://postimg.cc/XXt90jgp ",
+    "https://i.postimg.cc/94cGNLYb/image.jpg",
+    "https://i.postimg.cc/XXt90jgp/image.jpg"
 ]
 
-random_image_url = random.choice(image_urls) 
+# Buttons
+keyboard = InlineKeyboardMarkup([
+    [InlineKeyboardButton("📂 Start Upload", callback_data="xtract")],
+    [InlineKeyboardButton("📖 Help", callback_data="help")]
+])
+
 # Caption for the image
-caption = (
+def get_caption():
+    return (
         "**ʜᴇʟʟᴏ👋**\n\n"
-        "➠ **ɪ ᴀᴍ ᴛxᴛ ᴛᴏ ᴠɪᴅᴇᴏ ᴜᴘʟᴏᴀᴅᴇʀ ʙᴏᴛ.**\n"
-        "➠ **ғᴏʀ ᴜsᴇ ᴍᴇ sᴇɴᴅ /xtract.\n"
-        "➠ **ғᴏʀ ɢᴜɪᴅᴇ sᴇɴᴅ /help."
-)
-    
+        "➠ **ɪ ᴀᴍ ᴀɴ ᴀᴅᴠᴀɴᴄᴇᴅ ᴛxᴛ-ᴛᴏ-ᴠɪᴅᴇᴏ ᴜᴘʟᴏᴀᴅᴇʀ ʙᴏᴛ.**\n"
+        "➠ **sᴇɴᴅ `/xtract` ᴛᴏ sᴛᴀʀᴛ.**\n"
+        "➠ **sᴇɴᴅ `/help` ғᴏʀ ɢᴜɪᴅᴇ.**\n\n"
+        "✨ 𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗕𝘆 ➤ 𝗖𝗛𝗢𝗦𝗘𝗡 𝗢𝗡𝗘 ⚝"
+    )
+
 # Start command handler
-@bot.on_message(filters.command(["start"]))
+@bot.on_message(filters.command("start"))
 async def start_command(bot: Client, message: Message):
-    await bot.send_photo(chat_id=message.chat.id, caption=caption, reply_markup=keyboard)
-    
+    image_url = random.choice(image_urls).strip()
+
+    try:
+        await bot.send_photo(
+            chat_id=message.chat.id,
+            photo=image_url,
+            caption=get_caption(),
+            reply_markup=keyboard,
+            parse_mode="markdown"
+        )
+    except Exception as e:
+        # If image fails, fallback to plain text
+        await message.reply_text(get_caption(), parse_mode="markdown", reply_markup=keyboard)
 # Stop command handler
 @bot.on_message(filters.command("stop"))
 async def restart_handler(_, m: Message):
@@ -234,7 +252,7 @@ async def upload(bot: Client, m: Message):
         return
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-    await editable.edit(f"`𝗧𝗼𝘁𝗮𝗹 🔗 𝗟𝗶𝗻𝗸𝘀 𝗙𝗼𝘂𝗻𝗱 𝗔𝗿𝗲 {len(links)}\n\n🔹Img : {img_count}  🔹Pdf : {pdf_count}\n🔹Zip : {zip_count}  🔹Video : {video_count}\n\n𝗦𝗲𝗻𝗱 𝗙𝗿𝗼𝗺 𝗪𝗵𝗲𝗿𝗲 𝗬𝗼𝘂 𝗪𝗮𝗻𝘁 𝗧𝗼 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱.`")
+    await editable.edit(f"`𝗧𝗼𝘁𝗮𝗹 🔗 𝗟𝗶𝗻𝗸𝘀 𝗙𝗼𝘂𝗻𝗱 {len(links)}\n\n 💠Img : {img_count}  💠Pdf : {pdf_count}\n 💠Zip : {zip_count}  💠Video : {video_count}\n\n𝗦𝗲𝗻𝗱 𝗙𝗿𝗼𝗺 𝗪𝗵𝗲𝗿𝗲 𝗬𝗼𝘂 𝗪𝗮𝗻𝘁 𝗧𝗼 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱.`")
     input0: Message = await bot.listen(editable.chat.id)
     raw_text = input0.text
     await input0.delete(True)
@@ -276,14 +294,14 @@ async def upload(bot: Client, m: Message):
     
     
 
-    await editable.edit("📛 𝗘𝗻𝘁𝗲𝗿 𝗬𝗼𝘂𝗿 𝗡𝗮𝗺𝗲 📛\n\n🐥 𝗦𝗲𝗻𝗱 `1` 𝗙𝗼𝗿 𝗨𝘀𝗲 𝗗𝗲𝗳𝗮𝘂𝗹𝘁 🐥")
+    await editable.edit("🌚 𝗘𝗻𝘁𝗲𝗿 𝗬𝗼𝘂𝗿 𝗡𝗮𝗺𝗲 🌝\n\n🐥 𝗦𝗲𝗻𝗱 `1` 𝗙𝗼𝗿 𝗨𝘀𝗲 𝗗𝗲𝗳𝗮𝘂𝗹𝘁 🐥")
     input3: Message = await bot.listen(editable.chat.id)
     raw_text3 = input3.text
     await input3.delete(True)
     # Default credit message with link
-    credit = "️[𝗧𝘂𝘀𝗵𝗮𝗿](https://t.me/Tushar0125)"
+    credit = "️[𝗖𝗛𝗢𝗦𝗘𝗡 𝗢𝗡𝗘 ⚝](https://t.me/Tushar0125)"
     if raw_text3 == '1':
-        CR = '[𝗧𝘂𝘀𝗵𝗮𝗿](https://t.me/Tushar0125)'
+        CR = '[𝗖𝗛𝗢𝗦𝗘𝗡 𝗢𝗡𝗘 ⚝⚝](https://t.me/Tushar0125)'
     elif raw_text3:
         try:
             text, link = raw_text3.split(',')
@@ -298,11 +316,11 @@ async def upload(bot: Client, m: Message):
     #else:
         #MR = raw_text3
    
-    await editable.edit("**𝗘𝗻𝘁𝗲𝗿 𝗣𝘄 𝗧𝗼𝗸𝗲𝗻 𝗙𝗼𝗿 𝗣𝘄 𝗨𝗽𝗹𝗼𝗮𝗱𝗶𝗻𝗴 𝗼𝗿 𝗦𝗲𝗻𝗱 `3` 𝗙𝗼𝗿 𝗢𝘁𝗵𝗲𝗿𝘀**")
+    await editable.edit("**𝗘𝗻𝘁𝗲𝗿 𝗣𝘄 𝗧𝗼𝗸𝗲𝗻 𝗙𝗼𝗿 𝗣𝘄 𝗨𝗽𝗹𝗼𝗮𝗱𝗶𝗻𝗴 𝗼𝗿 𝗦𝗲𝗻𝗱 `9` 𝗙𝗼𝗿 𝗢𝘁𝗵𝗲𝗿𝘀**")
     input4: Message = await bot.listen(editable.chat.id)
     raw_text4 = input4.text
     await input4.delete(True)
-    if raw_text4 == 3:
+    if raw_text4 == 9:
         MR = token
     else:
         MR = raw_text4
