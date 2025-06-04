@@ -380,7 +380,7 @@ async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
 
     # Ensure Telegram streamable .mp4 with faststart
     if filename.endswith(".mp4"):
-        fixed = f"fixed_{os.path.basename(filename)}"
+        fixed = f"⚝..{os.path.basename(filename)}"
         subprocess.run(f'ffmpeg -y -i "{filename}" -c copy -movflags +faststart "{fixed}"', shell=True)
         if os.path.exists(fixed):
             os.remove(filename)
