@@ -374,101 +374,110 @@ def get_next_emoji():
     return emoji
 
 
+
+def get_resolution(path):
+    try:
+        probe = ffmpeg.probe(path)
+        video_streams = [s for s in probe["streams"] if s["codec_type"] == "video"]
+        if video_streams:
+            width = video_streams[0]["width"]
+            height = video_streams[0]["height"]
+            return width, height
+    except:
+        return 1280, 720  # fallback resolution
+
+
+def safe_duration(path):
+    try:
+        return int(duration(path))
+    except:
+        try:
+            result = os.popen(
+                f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{path}"'
+            ).read()
+            return int(float(result.strip()))
+        except:
+            return None
+
+
 async def send_vid(bot: Client, m: Message, cc, filename, thumb, name, prog):
-    
     emoji = get_next_emoji()
 
-    # Ensure Telegram streamable .mp4 with faststart
+    # ✅ Ensure MP4 is streamable
     if filename.endswith(".mp4"):
-        fixed = f"⚝..{os.path.basename(filename)}"
-        subprocess.run(f'ffmpeg -y -i "{filename}" -c copy -movflags +faststart "{fixed}"', shell=True)
+        fixed = f"fixed_{os.path.basename(filename)}"
+        subprocess.run(
+            f'ffmpeg -y -i "{filename}" -c copy -movflags +faststart "{fixed}"',
+            shell=True,
+        )
         if os.path.exists(fixed):
             os.remove(filename)
             filename = fixed
 
-    # Generate thumbnail if needed
+    # ✅ Generate or fetch thumbnail
     thumb_path = f"{filename}.jpg"
-    if not os.path.exists(thumb_path):
+    if thumb.startswith("http://") or thumb.startswith("https://"):
+        try:
+            wget.download(thumb, thumb_path)
+        except:
+            subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
+    elif thumb == "no" or not os.path.exists(thumb):
         subprocess.run(f'ffmpeg -i "{filename}" -ss 00:00:02 -vframes 1 "{thumb_path}"', shell=True)
+    else:
+        thumb_path = thumb
 
-    thumbnail = thumb if thumb != "no" else thumb_path
+    await prog.delete(True)
+    reply = await m.reply_text(f"🚀 Uploading `{name}` as video...")
 
-    try:
-        dur = int(duration(filename))
-    except Exception:
-        dur = None
-
+    dur = safe_duration(filename)
+    width, height = get_resolution(filename)
     start_time = time.time()
-    processing_msg = await m.reply_text(emoji)
+    progress_msg = await m.reply_text(emoji)
 
+    # ✅ Upload to user
     try:
         await m.reply_video(
             video=filename,
             caption=cc,
-            thumbnail=thumb_path,
+            thumb=thumb_path,
             duration=dur,
+            width=width,
+            height=height,
             supports_streaming=True,
-            height=720,
-            width=1280,
             progress=progress_bar,
-            progress_args=(processing_msg, start_time)
+            progress_args=(progress_msg, start_time)
         )
-    except Exception:
-        # If video fails, fallback to document upload
+    except Exception as e:
+        await m.reply_text(f"❌ Upload failed as video, sending as document.\n`{e}`")
         await m.reply_document(
             document=filename,
             caption=cc,
             progress=progress_bar,
-            progress_args=(processing_msg, start_time)
+            progress_args=(progress_msg, start_time)
         )
 
-    # Optionally upload to log channel as streamable video
+    # ✅ Upload to log channel
     try:
         await bot.send_video(
             chat_id=LOG_CHANNEL,
             video=filename,
             caption=f"🧾 Uploaded by [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n{cc}",
-            thumbnail=thumb_path,
+            thumb=thumb_path,
             duration=dur,
+            width=width,
+            height=height,
             supports_streaming=True
         )
     except Exception as e:
-        print(f"❌ Log upload failed: {e}")
-
-    # Cleanup
-    for f in [filename, thumb_path]:
-        if os.path.exists(f):
-            os.remove(f)
-
-    await processing_msg.delete(True)
+        print(f"[LOG UPLOAD ERROR] {e}")
 
     # ✅ Cleanup
-    for f in [filename, thumb_path]:
+    for f in [filename, f"{filename}.jpg"]:
         if os.path.exists(f):
             os.remove(f)
-
-    await processing_msg.delete(True)
+    await progress_msg.delete(True)
     await reply.delete(True)
-
-    # Cleanup
-    for f in [filename, thumb_path]:
-        if os.path.exists(f):
-            os.remove(f)
-    await processing_msg.delete(True)
-    await reply.delete(True)
-
-
-    # Cleanup
-    if os.path.exists(filename):
-        os.remove(filename)
-    if os.path.exists(thumb_path):
-        os.remove(thumb_path)
-
-    await processing_msg.delete(True)
-    await reply.delete(True)
-
-
-
+    
 async def watermark_pdf(file_path, watermark_text):
     def create_watermark(text):
         """Create a PDF watermark using ReportLab."""
